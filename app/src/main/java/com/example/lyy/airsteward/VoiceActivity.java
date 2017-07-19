@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class IndexActivity extends AppCompatActivity {
+public class VoiceActivity extends AppCompatActivity {
 
     private Button button;
     private TextView textView;
@@ -20,7 +20,7 @@ public class IndexActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_index);
+        setContentView(R.layout.activity_voice);
 
         button = (Button) findViewById(R.id.btn);
         textView = (TextView) findViewById(R.id.tv);

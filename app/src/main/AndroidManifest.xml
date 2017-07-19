@@ -63,7 +63,7 @@
         <!-- <activity android:name="com.example.lyy.airsteward.LoginActivity" android:theme="@style/AppTheme.Dark" /> -->
         <!-- <activity android:name="com.example.lyy.airsteward.SignupActivity" android:theme="@style/AppTheme.Dark" /> -->
         <activity android:name=".RoomActivity" />
-        <activity android:name=".IndexActivity" />
+        <activity android:name=".VoiceActivity" />
         <activity android:name=".WeatherActivity" />
 
         <service
