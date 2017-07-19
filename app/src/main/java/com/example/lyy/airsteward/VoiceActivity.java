@@ -10,9 +10,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import at.markushi.ui.CircleButton;
+
 public class VoiceActivity extends AppCompatActivity {
 
-    private Button button;
+    private CircleButton button;
     private TextView textView;
 
     private static final int REQUEST_UI = 1;
@@ -22,7 +24,7 @@ public class VoiceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_voice);
 
-        button = (Button) findViewById(R.id.btn);
+        button = (CircleButton) findViewById(R.id.btn);
         textView = (TextView) findViewById(R.id.tv);
 
         button.setOnClickListener(new View.OnClickListener() {

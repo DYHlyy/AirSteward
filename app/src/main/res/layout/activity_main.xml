@@ -4,33 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F0FFF0"
     android:gravity="center"
     android:orientation="vertical"
     tools:context="com.example.lyy.airsteward.MainActivity">
 
-    <TextView
+    <Button
+        android:id="@+id/weather"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="@string/app_name"
-        android:textSize="25sp" />
+        android:text="weather" />
 
-    <android.support.v7.widget.CardView
+    <Button
+        android:id="@+id/home"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
-        android:layout_gravity="center"
-        android:layout_margin="20dp"
-        android:padding="10dp"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="10dp">
+        android:layout_height="wrap_content"
+        android:text="home" />
 
-        <include
-            layout="@layout/content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </android.support.v7.widget.CardView>
+    <at.markushi.ui.CircleButton
+        android:id="@+id/voice"
+        android:layout_width="64dip"
+        android:layout_height="64dip"
+        android:src="@drawable/voice_icon"
+        app:cb_color="#99CC00"
+        app:cb_pressedRingWidth="8dip" />
 
 </LinearLayout>

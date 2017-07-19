@@ -60,6 +60,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".HomeActivity" />
         <!-- <activity android:name="com.example.lyy.airsteward.LoginActivity" android:theme="@style/AppTheme.Dark" /> -->
         <!-- <activity android:name="com.example.lyy.airsteward.SignupActivity" android:theme="@style/AppTheme.Dark" /> -->
         <activity android:name=".RoomActivity" />
@@ -71,7 +72,8 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".WeatherIndexActivity"></activity>
+        <activity android:name=".WeatherIndexActivity" />
+
     </application>
 
 </manifest>
