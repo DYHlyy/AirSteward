@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">AirSteward</string>
+    <string name="ch2o">CH2O</string>
+    <string name="pm25">PM 2.5</string>
+    <string name="co2">CO2</string>
+    <string name="formaldehyde">Formaldehyde</string>
+    <string name="flammable_gas">Flammable gas</string>
+
+    <string name="flammable_gas_ok">OK</string>
+    <string name="flammable_gas_exceeded">Exceeded</string>
+
+
+    <string name="temperature_format" formatted="false">Temperature: </string>
+    <string name="humidity_format" formatted="false">Humidity: </string>
+
+    <string name="device_format" formatted="false">Device %d</string>
+    <string name="pm25_format" formatted="false"><![CDATA[%d ug/m<sup><small>3</small></sup>]]></string>
+
+    <string name="last_update" formatted="false">Last update: %s\u0020</string>
+    <string name="auto_refresh">Auto refresh</string>
+</resources>
