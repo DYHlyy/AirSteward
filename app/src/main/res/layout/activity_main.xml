@@ -8,24 +8,41 @@
     android:orientation="vertical"
     tools:context="com.example.lyy.airsteward.MainActivity">
 
-    <Button
-        android:id="@+id/weather"
+    <include layout="@layout/toolbar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/degree_tv"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:background="@drawable/shape_round_textview"
+        android:gravity="center"
+        android:text="degree"
+        android:textSize="40sp" />
+
+    <TextView
+        android:id="@+id/voice_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="weather" />
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="voice" />
 
-    <Button
-        android:id="@+id/home"
+    <com.gjiazhe.multichoicescirclebutton.MultiChoicesCircleButton
+        android:id="@+id/multiChoicesCircleButton"
+        mccb_showBackgroundShadow="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="home" />
-
-    <at.markushi.ui.CircleButton
-        android:id="@+id/voice"
-        android:layout_width="64dip"
-        android:layout_height="64dip"
-        android:src="@drawable/voice_icon"
-        app:cb_color="#99CC00"
-        app:cb_pressedRingWidth="8dip" />
-
+        android:layout_gravity="bottom"
+        app:layout_behavior="@string/multi_choices_circle_button_behavior"
+        app:mccb_buttonColor="@color/material_blue_200"
+        app:mccb_collapseRadius="40dp"
+        app:mccb_expandRadius="120dp"
+        app:mccb_icon="@drawable/function"
+        app:mccb_text="Choose" />
 </LinearLayout>

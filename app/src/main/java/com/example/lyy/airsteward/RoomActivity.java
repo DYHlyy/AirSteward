@@ -270,7 +270,7 @@ public class RoomActivity extends AppCompatActivity implements CompoundButton.On
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
+        inflater.inflate(R.menu.share, menu);
         return true;
     }
 

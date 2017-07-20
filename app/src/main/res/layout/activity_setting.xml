@@ -6,21 +6,12 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context="com.example.lyy.airsteward.VoiceActivity">
+    tools:context="com.example.lyy.airsteward.SettingActivity">
 
     <TextView
-        android:id="@+id/tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:gravity="center"
-        android:text="TextView" />
+        android:text="这里是设置界面" />
 
-    <at.markushi.ui.CircleButton
-        android:id="@+id/btn"
-        android:layout_width="64dip"
-        android:layout_height="64dip"
-        android:src="@drawable/voice_icon"
-        app:cb_color="#99CC00"
-        app:cb_pressedRingWidth="8dip" />
 </LinearLayout>

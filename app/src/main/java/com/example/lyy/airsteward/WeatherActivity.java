@@ -208,6 +208,11 @@ public class WeatherActivity extends AppCompatActivity {
         degreeText.setText(degree);
         weatherInfoText.setText(weatherInfo);
         forecastLayout.removeAllViews();
+
+        SharedPreferences.Editor editor = getSharedPreferences("degree_to_index", MODE_PRIVATE).edit();
+        editor.putString("degree", degree);
+        editor.apply();
+
         for (Forecast forecast : weather.forecastList) {
             View view = LayoutInflater.from(this).inflate(R.layout.forecast_item, forecastLayout, false);
             TextView dateText = (TextView) view.findViewById(R.id.date_text);

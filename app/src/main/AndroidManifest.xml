@@ -53,18 +53,16 @@
         </activity>
         <!-- end : baidu speech sdk -->
 
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity android:name=".HomeActivity" />
         <!-- <activity android:name="com.example.lyy.airsteward.LoginActivity" android:theme="@style/AppTheme.Dark" /> -->
         <!-- <activity android:name="com.example.lyy.airsteward.SignupActivity" android:theme="@style/AppTheme.Dark" /> -->
         <activity android:name=".RoomActivity" />
-        <activity android:name=".VoiceActivity" />
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".WeatherActivity" />
 
         <service
@@ -73,7 +71,7 @@
             android:exported="true" />
 
         <activity android:name=".WeatherIndexActivity" />
-
+        <activity android:name=".SettingActivity"></activity>
     </application>
 
 </manifest>
