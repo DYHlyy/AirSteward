@@ -1,11 +1,16 @@
 package com.example.lyy.airsteward;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.speech.SpeechRecognizer;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -86,13 +91,35 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent2);
                         break;
                     case "Voice":
-                        start();
+                        isVoicePermitted();
                         break;
                     default:
                         break;
                 }
             }
         });
+    }
+
+    private void isVoicePermitted() {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+        } else {
+            start();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    start();
+                } else {
+                    Toasty.error(MainActivity.this, "你还没有获取权限", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+        }
     }
 
     private void initToolbar() {
