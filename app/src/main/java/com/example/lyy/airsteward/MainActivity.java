@@ -1,6 +1,8 @@
 package com.example.lyy.airsteward;
 
 import android.Manifest;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private TextView mToolBarTextView;
 
+    private NotificationCompat.Builder notifyBuilder;
+    private NotificationManager mNotificationManager;
+
     private static final int REQUEST_UI = 1;
 
     @Override
@@ -42,6 +48,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (isNetworkAvailable()) {
+            Toasty.success(MainActivity.this, "网络连接成功").show();
+        } else {
+            Toasty.warning(MainActivity.this, "请检查网络连接").show();
+        }
+
+        init();
+        setNotification();
+        initToolbar();
+        show_cache();
+        init_chooseItem();
+
+    }
+
+
+    private void init() {
         voice_tv = (TextView) findViewById(R.id.voice_tv);
         degree_tv = (TextView) findViewById(R.id.degree_tv);
 
@@ -49,20 +71,50 @@ public class MainActivity extends AppCompatActivity {
         mToolBarTextView = (TextView) findViewById(R.id.text_view_toolbar_title);
         mToolBarTextView.setText("空气管家");
 
-        initToolbar();
+        notifyBuilder = new NotificationCompat.Builder(this);
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+    }
 
-        if (isNetworkAvailable()) {
-            Toasty.success(MainActivity.this, "网络连接成功").show();
-        } else {
-            Toasty.warning(MainActivity.this, "请检查网络连接").show();
-        }
-
-
+    //显示缓存数据
+    private void show_cache() {
         SharedPreferences pref = getSharedPreferences("degree_to_index", MODE_PRIVATE);
         String degree = pref.getString("degree", "");
-        degree_tv.setText(degree);
+        if (degree != null) {
+            degree_tv.setText(degree);
+        }
 
+    }
 
+    // 添加常驻通知
+    private void setNotification() {
+
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent contextIntent = PendingIntent.getActivity(this, 0,
+                intent, 0);
+
+        notifyBuilder.setContentTitle("室内空气状况:");
+        notifyBuilder.setContentText("优");
+        notifyBuilder.setSmallIcon(R.drawable.icon);
+        notifyBuilder.setOngoing(true);
+        notifyBuilder.setContentIntent(contextIntent);
+
+        mNotificationManager.notify(1, notifyBuilder.build());
+
+        SharedPreferences pref = MainActivity.this.getSharedPreferences("isOpen", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean("isNotificationOpen", true);
+        editor.commit();
+    }
+
+    private void isVoicePermitted() {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+        } else {
+            start();
+        }
+    }
+
+    private void init_chooseItem() {
         MultiChoicesCircleButton.Item item1 = new MultiChoicesCircleButton.Item("Weather", getResources().getDrawable(R.drawable.weather), 30);
 
         MultiChoicesCircleButton.Item item2 = new MultiChoicesCircleButton.Item("Voice", getResources().getDrawable(R.drawable.voice_icon), 90);
@@ -100,27 +152,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void isVoicePermitted() {
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
-        } else {
-            start();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 1:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    start();
-                } else {
-                    Toasty.error(MainActivity.this, "你还没有获取权限", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            default:
-        }
-    }
 
     private void initToolbar() {
 
@@ -152,13 +183,6 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        SharedPreferences pref = getSharedPreferences("degree_to_index", MODE_PRIVATE);
-        String degree = pref.getString("degree", "");
-        degree_tv.setText(degree);
-    }
 
     private void start() {
         Intent recognizerIntent = new Intent("com.baidu.action.RECOGNIZE_SPEECH");
@@ -171,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //用语音控制行为的方法
-    private void action(String action) {
+    private void voice_control_action(String action) {
         switch (action) {
             case "打开窗户":
                 //openWindow()
@@ -195,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
             String res = str.substring(str.indexOf("[") + 1, str.indexOf("]"));
             voice_tv.setText(res + "\n");
             // data.get... TODO 识别结果包含的信息见本文档的“结果解析”一节
-            action(res);
+            voice_control_action(res);
         }
     }
 
@@ -207,6 +231,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences pref = getSharedPreferences("degree_to_index", MODE_PRIVATE);
+        String degree = pref.getString("degree", "");
+        degree_tv.setText(degree);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.setting:
@@ -215,5 +247,19 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    start();
+                } else {
+                    Toasty.error(MainActivity.this, "你还没有获取权限", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+        }
     }
 }
