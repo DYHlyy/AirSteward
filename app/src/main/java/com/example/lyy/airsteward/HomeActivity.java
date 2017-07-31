@@ -34,19 +34,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intent1 = new Intent(HomeActivity.this, RoomActivity.class);
                 intent1.putExtra("room_id", "1");
                 startActivity(intent1);
-
                 break;
             case R.id.room2:
                 Intent intent2 = new Intent(HomeActivity.this, RoomActivity.class);
                 intent2.putExtra("room_id", "2");
                 startActivity(intent2);
-
                 break;
             case R.id.room3:
                 Intent intent3 = new Intent(HomeActivity.this, RoomActivity.class);
                 intent3.putExtra("room_id", "3");
                 startActivity(intent3);
-
                 break;
             default:
                 break;

@@ -1,12 +1,16 @@
 package com.example.lyy.airsteward;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -64,6 +68,14 @@ public class RoomActivity extends AppCompatActivity implements CompoundButton.On
     private int red = Color.rgb(255, 0, 0);
     private int green = Color.rgb(0, 128, 0);
 
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+
+    private NotificationCompat.Builder notifyBuilder;
+    private NotificationManager mNotificationManager;
+
+    private boolean isNotificationOpen;
+
     RadarData data = new RadarData(values);
 
     @Override
@@ -74,16 +86,30 @@ public class RoomActivity extends AppCompatActivity implements CompoundButton.On
         int color = Color.rgb(20, 157, 163);
         StatusBarCompat.setStatusBarColor(this, color, true);
 
+        sharedPreferences = getSharedPreferences("isOpen", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+        isNotificationOpen = sharedPreferences.getBoolean("isNotificationOpen", false);
+
         init();
         choose();
         initToolbar();
 
-        if (isNetworkAvailable()) {
-            //Toast.makeText(this, "联网成功", Toast.LENGTH_SHORT).show();
+        if (isNotificationOpen) {
+            setNotification();
+            editor.putBoolean("isNotificationOpen", true);
+            editor.apply();
         } else {
-            textView.setText("----");
-            //Toast.makeText(this, "联网失败", Toast.LENGTH_SHORT).show();
+            cancelNotification();
+            editor.putBoolean("isNotificationOpen", false);
+            editor.apply();
         }
+//        if (isNetworkAvailable()) {
+//            //Toast.makeText(this, "联网成功", Toast.LENGTH_SHORT).show();
+//        } else {
+//            textView.setText("----");
+//            //Toast.makeText(this, "联网失败", Toast.LENGTH_SHORT).show();
+//        }
 
     }
 
@@ -93,6 +119,12 @@ public class RoomActivity extends AppCompatActivity implements CompoundButton.On
     }
 
     private void init() {
+        notifyBuilder = new NotificationCompat.Builder(this);
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        sharedPreferences = getSharedPreferences("values", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
         final Intent intent = getIntent();
 
         mRadarView = (RadarView) findViewById(R.id.radarView);
@@ -116,15 +148,38 @@ public class RoomActivity extends AppCompatActivity implements CompoundButton.On
                         if (isNetworkAvailable()) {
                             radarViewData(PM, CH2O, CO2, Temperature, Humidity);
                             sendRequestWithOkHttp(intent.getStringExtra("room_id"));
+                            if (isNotificationOpen) {
+                                setNotification();
+                            }
                         } else {
                             Toasty.warning(RoomActivity.this, "请检查网络连接").show();
                         }
-
                         mPullToRefreshView.setRefreshing(false);
                     }
                 }, 1000);
             }
         });
+    }
+
+    private void setNotification() {
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent contextIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        String PM = sharedPreferences.getString("PM2.5", "");
+        String Quailty = sharedPreferences.getString("Quality", "");
+
+        notifyBuilder.setContentTitle("室内空气状况: " + Quailty);
+        notifyBuilder.setContentText("PM2.5浓度: " + PM);
+        notifyBuilder.setSmallIcon(R.drawable.icon);
+        notifyBuilder.setOngoing(true);
+        notifyBuilder.setContentIntent(contextIntent);
+        mNotificationManager.notify(1, notifyBuilder.build());
+    }
+
+    // 取消通知
+    private void cancelNotification() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancel(1);
     }
 
     private boolean isNetworkAvailable() {
@@ -211,6 +266,10 @@ public class RoomActivity extends AppCompatActivity implements CompoundButton.On
                     CO2 = object.getString("co2");
                     CH2O = object.getString("ch2o");
                     //Gas = object.getString("landfillGas");
+
+                    editor.putString("PM2.5", PM);
+                    editor.putString("Quality", "优");
+                    editor.apply();
 
                     Temp_degree = Float.parseFloat(Temperature);
                     Hum_degree = Float.parseFloat(Humidity);

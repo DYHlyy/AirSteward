@@ -25,7 +25,7 @@ public class SettingActivity extends AppCompatActivity implements SwitchButton.O
     private NotificationCompat.Builder notifyBuilder;
     private NotificationManager mNotificationManager;
 
-    private SwitchButton toast_btn, door_btn1, door_btn2, door_btn3, fan_btn1, fan_btn2, light_btn1, light_btn2;
+    private SwitchButton toast_btn, door_btn1, window_btn1, window_btn2, fan_btn1, fan_btn2, light_btn1, light_btn2;
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -41,18 +41,15 @@ public class SettingActivity extends AppCompatActivity implements SwitchButton.O
 
     // 添加常驻通知
     private void setNotification() {
-
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent contextIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-        notifyBuilder.setContentTitle("室内空气状况:");
-        notifyBuilder.setContentText("优");
+        notifyBuilder.setContentTitle("室内空气状况: " + "优");
+        notifyBuilder.setContentText("PM2.5浓度: " + "20");
         notifyBuilder.setSmallIcon(R.drawable.icon);
         notifyBuilder.setOngoing(true);
         notifyBuilder.setContentIntent(contextIntent);
-
         mNotificationManager.notify(1, notifyBuilder.build());
-
     }
 
     // 取消通知
@@ -67,8 +64,8 @@ public class SettingActivity extends AppCompatActivity implements SwitchButton.O
 
         toast_btn = (SwitchButton) findViewById(R.id.toast_btn);
         door_btn1 = (SwitchButton) findViewById(R.id.door_btn_1);
-        door_btn2 = (SwitchButton) findViewById(R.id.door_btn_2);
-        door_btn3 = (SwitchButton) findViewById(R.id.door_btn_3);
+        window_btn1 = (SwitchButton) findViewById(R.id.window_btn_1);
+        window_btn2 = (SwitchButton) findViewById(R.id.window_btn_2);
         fan_btn1 = (SwitchButton) findViewById(R.id.fan_btn_1);
         fan_btn2 = (SwitchButton) findViewById(R.id.fan_btn_2);
         light_btn1 = (SwitchButton) findViewById(R.id.light_btn_1);

@@ -60,6 +60,7 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -71,7 +72,8 @@
             android:exported="true" />
 
         <activity android:name=".WeatherIndexActivity" />
-        <activity android:name=".SettingActivity"></activity>
+        <activity android:name=".SettingActivity" />
+        <activity android:name=".HVACActivity"></activity>
     </application>
 
 </manifest>

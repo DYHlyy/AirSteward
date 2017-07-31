@@ -104,13 +104,11 @@ public class MainActivity extends AppCompatActivity {
 
     // 添加常驻通知
     private void setNotification() {
-
         Intent intent = new Intent(this, MainActivity.class);
-        PendingIntent contextIntent = PendingIntent.getActivity(this, 0,
-                intent, 0);
+        PendingIntent contextIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-        notifyBuilder.setContentTitle("室内空气状况:");
-        notifyBuilder.setContentText("优");
+        notifyBuilder.setContentTitle("室内空气状况:" + "优");
+        notifyBuilder.setContentText("PM2.5浓度: " + "20");
         notifyBuilder.setSmallIcon(R.drawable.icon);
         notifyBuilder.setOngoing(true);
         notifyBuilder.setContentIntent(contextIntent);
@@ -179,11 +177,12 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
-        mToolbar.setNavigationIcon(R.drawable.back);
+        mToolbar.setNavigationIcon(R.drawable.hvac);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                Intent intent = new Intent(MainActivity.this, HVACActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -220,8 +219,16 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "你说了打开窗户命令", Toast.LENGTH_SHORT).show();
                 break;
             case "查看天气":
-                Intent intent = new Intent(MainActivity.this, WeatherIndexActivity.class);
-                startActivity(intent);
+                Intent intent1 = new Intent(MainActivity.this, WeatherIndexActivity.class);
+                startActivity(intent1);
+                break;
+            case "设置":
+                Intent intent2 = new Intent(MainActivity.this, SettingActivity.class);
+                startActivity(intent2);
+                break;
+            case "打开空调":
+                Intent intent3 = new Intent(MainActivity.this, HVACActivity.class);
+                startActivity(intent3);
                 break;
             default:
                 break;
