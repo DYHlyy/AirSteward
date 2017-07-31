@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.speech.SpeechRecognizer;
+import android.support.annotation.BoolRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -43,19 +44,15 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_UI = 1;
 
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (isNetworkAvailable()) {
-            Toasty.success(MainActivity.this, "网络连接成功").show();
-        } else {
-            Toasty.warning(MainActivity.this, "请检查网络连接").show();
-        }
-
         init();
-        setNotification();
         initToolbar();
         show_cache();
         init_chooseItem();
@@ -73,6 +70,26 @@ public class MainActivity extends AppCompatActivity {
 
         notifyBuilder = new NotificationCompat.Builder(this);
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        sharedPreferences = getSharedPreferences("isOpen", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+        if (isNetworkAvailable()) {
+            Toasty.success(MainActivity.this, "网络连接成功").show();
+        } else {
+            Toasty.warning(MainActivity.this, "请检查网络连接").show();
+        }
+
+        boolean isNotificationOpen = sharedPreferences.getBoolean("isNotificationOpen", false);
+        if (isNotificationOpen) {
+            setNotification();
+            editor.putBoolean("isNotificationOpen", true);
+            editor.apply();
+        } else {
+            cancelNotification();
+            editor.putBoolean("isNotificationOpen", false);
+            editor.apply();
+        }
     }
 
     //显示缓存数据
@@ -99,11 +116,12 @@ public class MainActivity extends AppCompatActivity {
         notifyBuilder.setContentIntent(contextIntent);
 
         mNotificationManager.notify(1, notifyBuilder.build());
+    }
 
-        SharedPreferences pref = MainActivity.this.getSharedPreferences("isOpen", MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putBoolean("isNotificationOpen", true);
-        editor.commit();
+    // 取消通知
+    private void cancelNotification() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancel(1);
     }
 
     private void isVoicePermitted() {
@@ -262,4 +280,6 @@ public class MainActivity extends AppCompatActivity {
             default:
         }
     }
+
+
 }
