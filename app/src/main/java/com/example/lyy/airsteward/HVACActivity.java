@@ -12,9 +12,6 @@ import android.widget.Toast;
 
 public class HVACActivity extends AppCompatActivity {
 
-    private Toolbar mToolbar;
-    private TextView mToolBarTextView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,8 +22,8 @@ public class HVACActivity extends AppCompatActivity {
 
     private void initToolbar() {
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolBarTextView = (TextView) findViewById(R.id.text_view_toolbar_title);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        TextView mToolBarTextView = (TextView) findViewById(R.id.text_view_toolbar_title);
 
         mToolbar.setTitle(null);
         mToolBarTextView.setText("大厅空调");

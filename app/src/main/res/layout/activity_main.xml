@@ -28,21 +28,56 @@
 
         <include layout="@layout/toolbar" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="200dp">
-
-        </LinearLayout>
-
         <TextView
             android:id="@+id/degree_tv"
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_gravity="center"
+            android:layout_marginTop="30dp"
             android:background="@drawable/shape_round_textview"
             android:gravity="center"
             android:text="degree"
             android:textSize="40sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="AQI: "
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/aqi_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text=" 指数"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="PM2.5: "
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/pm_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="指数"
+                android:textSize="20sp" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/voice_tv"
@@ -51,7 +86,6 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:text="voice" />
-
 
     </LinearLayout>
 

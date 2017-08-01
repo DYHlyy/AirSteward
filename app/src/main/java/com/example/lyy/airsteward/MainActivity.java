@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView voice_tv;
     private TextView degree_tv;
+    private TextView pm_tv;
+    private TextView aqi_tv;
 
     private Toolbar mToolbar;
     private TextView mToolBarTextView;
@@ -63,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
     private void init() {
         voice_tv = (TextView) findViewById(R.id.voice_tv);
         degree_tv = (TextView) findViewById(R.id.degree_tv);
+        aqi_tv = (TextView) findViewById(R.id.aqi_tv);
+        pm_tv = (TextView) findViewById(R.id.pm_tv);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolBarTextView = (TextView) findViewById(R.id.text_view_toolbar_title);
@@ -94,10 +98,24 @@ public class MainActivity extends AppCompatActivity {
 
     //显示缓存数据
     private void show_cache() {
-        SharedPreferences pref = getSharedPreferences("degree_to_index", MODE_PRIVATE);
+        SharedPreferences pref = getSharedPreferences("data_to_mainPage", MODE_PRIVATE);
         String degree = pref.getString("degree", "");
-        if (degree != null) {
+        String AQI = pref.getString("AQI", "");
+        String PM = pref.getString("PM2.5", "");
+        if (degree.equals("")) {
+            degree_tv.setText("----");
+        } else {
             degree_tv.setText(degree);
+        }
+        if (AQI.equals("")) {
+            aqi_tv.setText("----");
+        } else {
+            aqi_tv.setText(AQI);
+        }
+        if (PM.equals("")) {
+            pm_tv.setText("----");
+        } else {
+            pm_tv.setText(PM);
         }
 
     }
@@ -258,9 +276,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences pref = getSharedPreferences("degree_to_index", MODE_PRIVATE);
+        SharedPreferences pref = getSharedPreferences("data_to_mainPage", MODE_PRIVATE);
         String degree = pref.getString("degree", "");
+        String AQI = pref.getString("AQI", "");
+        String PM = pref.getString("PM2.5", "");
         degree_tv.setText(degree);
+        aqi_tv.setText(AQI);
+        pm_tv.setText(PM);
+
     }
 
     @Override

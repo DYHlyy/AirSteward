@@ -209,10 +209,6 @@ public class WeatherActivity extends AppCompatActivity {
         weatherInfoText.setText(weatherInfo);
         forecastLayout.removeAllViews();
 
-        SharedPreferences.Editor editor = getSharedPreferences("degree_to_index", MODE_PRIVATE).edit();
-        editor.putString("degree", degree);
-        editor.apply();
-
         for (Forecast forecast : weather.forecastList) {
             View view = LayoutInflater.from(this).inflate(R.layout.forecast_item, forecastLayout, false);
             TextView dateText = (TextView) view.findViewById(R.id.date_text);
@@ -236,6 +232,13 @@ public class WeatherActivity extends AppCompatActivity {
         carWashText.setText(carWash);
         sportText.setText(sport);
         weatherLayout.setVisibility(View.VISIBLE);
+
+        SharedPreferences.Editor editor = getSharedPreferences("data_to_mainPage", MODE_PRIVATE).edit();
+        editor.putString("degree", degree);
+        editor.putString("AQI", weather.aqi.city.aqi);
+        editor.putString("PM2.5", weather.aqi.city.pm25);
+        editor.apply();
+
         Intent intent = new Intent(this, AutoUpdateService.class);
         startService(intent);
     }

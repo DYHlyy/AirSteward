@@ -80,25 +80,6 @@
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
-        android:id="@+id/room2"
-        style="@style/Room"
-        android:foreground="?attr/selectableItemBackground"
-        app:cardBackgroundColor="@color/material_blue_grey_50"
-        app:cardElevation="10dp"
-        app:layout_heightPercent="70%"
-        app:layout_marginStartPercent="35%"
-        app:layout_marginTopPercent="20%"
-        app:layout_widthPercent="30%">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="客厅" />
-
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
         android:id="@+id/room1"
         style="@style/Room"
         android:layout_gravity="end"
@@ -115,6 +96,25 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="主卧" />
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/room2"
+        style="@style/Room"
+        android:foreground="?attr/selectableItemBackground"
+        app:cardBackgroundColor="@color/material_blue_grey_50"
+        app:cardElevation="10dp"
+        app:layout_heightPercent="70%"
+        app:layout_marginStartPercent="35%"
+        app:layout_marginTopPercent="20%"
+        app:layout_widthPercent="30%">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="客厅" />
 
     </android.support.v7.widget.CardView>
 
