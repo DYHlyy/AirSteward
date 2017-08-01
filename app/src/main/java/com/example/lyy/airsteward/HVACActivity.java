@@ -22,8 +22,8 @@ public class HVACActivity extends AppCompatActivity {
 
     private void initToolbar() {
 
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        TextView mToolBarTextView = (TextView) findViewById(R.id.text_view_toolbar_title);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.hvac_toolbar);
+        TextView mToolBarTextView = (TextView) findViewById(R.id.hvac_title);
 
         mToolbar.setTitle(null);
         mToolBarTextView.setText("大厅空调");
@@ -34,6 +34,7 @@ public class HVACActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
+        mToolbar.getBackground().setAlpha(0);
         mToolbar.setNavigationIcon(R.drawable.back);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

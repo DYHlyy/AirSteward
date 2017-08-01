@@ -1,14 +1,10 @@
 package com.example.lyy.airsteward;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.view.View;
-
-import es.dmoral.toasty.Toasty;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 

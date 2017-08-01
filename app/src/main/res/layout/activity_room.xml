@@ -14,45 +14,44 @@
         android:id="@+id/pull_to_refresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:layout_weight="7">
+        android:layout_weight="4">
 
         <rorbin.q.radarview.RadarView
             android:id="@+id/radarView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/material_blue_grey_50"
-            android:padding="-20dp" />
+            android:background="@color/material_blue_grey_50" />
 
     </com.yalantis.phoenix.PullToRefreshView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/material_blue_grey_50"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="房间状态:"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/eTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="正常"
-            android:textColor="#008000"
-            android:textSize="18sp" />
-
-    </LinearLayout>
-
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="8">
+        android:layout_weight="5"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/material_blue_grey_50"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="房间状态:"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/eTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="正常"
+                android:textColor="#008000"
+                android:textSize="18sp" />
+
+        </LinearLayout>
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewPager"

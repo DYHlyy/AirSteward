@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.speech.SpeechRecognizer;
 import android.support.annotation.BoolRes;
@@ -29,6 +30,7 @@ import com.gjiazhe.multichoicescirclebutton.MultiChoicesCircleButton;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import es.dmoral.toasty.Toasty;
 
 public class MainActivity extends AppCompatActivity {
@@ -230,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //用语音控制行为的方法
-    private void voice_control_action(String action) {
+    private void voice_control_action(final String action) {
         switch (action) {
             case "打开窗户":
                 //openWindow()
@@ -249,6 +251,30 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent3);
                 break;
             default:
+                new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("未匹配到 " + "“" + action + "”")
+                        .setContentText("您需要使用度娘吗？")
+                        .setCancelText("不，谢谢！")
+                        .setConfirmText("百度一下！")
+                        .showCancelButton(true)
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                sDialog.cancel();
+                            }
+                        })
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                String URL = "http://www.baidu.com/s?wd=";
+                                Intent intent = new Intent();
+                                intent.setAction(Intent.ACTION_VIEW);
+                                intent.setData(Uri.parse(URL + action));
+                                startActivity(intent);
+                                sweetAlertDialog.cancel();
+                            }
+                        })
+                        .show();
                 break;
         }
     }
