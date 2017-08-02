@@ -51,7 +51,7 @@
     </style>
 
     <style name="CardDataText.Main" parent="CardDataText">
-        <item name="android:textSize">35sp</item>
+        <item name="android:textSize">28sp</item>
         <item name="android:fontFamily" tools:targetApi="jelly_bean">sans-serif-light</item>
     </style>
 
