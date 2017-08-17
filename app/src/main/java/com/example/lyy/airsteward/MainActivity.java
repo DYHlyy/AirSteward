@@ -22,10 +22,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gjiazhe.multichoicescirclebutton.MultiChoicesCircleButton;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,13 +38,18 @@ import es.dmoral.toasty.Toasty;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView voice_tv;
-    private TextView degree_tv;
-    private TextView pm_tv;
-    private TextView aqi_tv;
+    private TextView quality_tv;
+    private TextView pm_out_tv;
+    private TextView aqi_out_tv;
+    private TextView co_in_tv;
+    private TextView pm_in_tv;
+    private TextView degree_in_tv;
+    private TextView gas_in_tv;
 
     private Toolbar mToolbar;
     private TextView mToolBarTextView;
+
+    private LinearLayout smallLabel;
 
     private NotificationCompat.Builder notifyBuilder;
     private NotificationManager mNotificationManager;
@@ -65,10 +73,15 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void init() {
-        voice_tv = (TextView) findViewById(R.id.voice_tv);
-        degree_tv = (TextView) findViewById(R.id.degree_tv);
-        aqi_tv = (TextView) findViewById(R.id.aqi_tv);
-        pm_tv = (TextView) findViewById(R.id.pm_tv);
+        quality_tv = (TextView) findViewById(R.id.quality_tv);
+        aqi_out_tv = (TextView) findViewById(R.id.aqi_out_tv);
+        pm_out_tv = (TextView) findViewById(R.id.pm_out_tv);
+        co_in_tv = (TextView) findViewById(R.id.co2_in_tv);
+        pm_in_tv = (TextView) findViewById(R.id.pm_in_tv);
+        degree_in_tv = (TextView) findViewById(R.id.degree_in_tv);
+        gas_in_tv = (TextView) findViewById(R.id.gas_in_tv);
+
+        smallLabel = (LinearLayout) findViewById(R.id.smallLabel);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolBarTextView = (TextView) findViewById(R.id.text_view_toolbar_title);
@@ -96,28 +109,66 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean("isNotificationOpen", false);
             editor.apply();
         }
+
+        smallLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, RoomActivity.class);
+                intent.putExtra("room_id", "1");
+                startActivity(intent);
+            }
+        });
     }
 
     //显示缓存数据
     private void show_cache() {
         SharedPreferences pref = getSharedPreferences("data_to_mainPage", MODE_PRIVATE);
-        String degree = pref.getString("degree", "");
         String AQI = pref.getString("AQI", "");
         String PM = pref.getString("PM2.5", "");
-        if (degree.equals("")) {
-            degree_tv.setText("----");
-        } else {
-            degree_tv.setText(degree);
-        }
+
         if (AQI.equals("")) {
-            aqi_tv.setText("----");
+            aqi_out_tv.setText("----");
         } else {
-            aqi_tv.setText(AQI);
+            aqi_out_tv.setText(AQI);
         }
         if (PM.equals("")) {
-            pm_tv.setText("----");
+            pm_out_tv.setText("----");
         } else {
-            pm_tv.setText(PM);
+            pm_out_tv.setText(PM);
+        }
+
+        SharedPreferences valuesPref = getSharedPreferences("values", MODE_PRIVATE);
+        String quality = valuesPref.getString("Quality", "");
+        String CO2_In = valuesPref.getString("CO2", "");
+        String PM_In = valuesPref.getString("PM", "");
+        String Degree = valuesPref.getString("Temperature", "");
+        String GAS = valuesPref.getString("Gas", "");
+        if (quality.equals("")) {
+            quality_tv.setText("----");
+        } else {
+            quality_tv.setText(quality);
+        }
+        if (CO2_In.equals("")) {
+            co_in_tv.setText("----");
+        } else {
+            co_in_tv.setText(AQI);
+        }
+        if (PM_In.equals("")) {
+            pm_in_tv.setText("----");
+        } else {
+            pm_in_tv.setText(PM);
+        }
+        if (Degree.equals("")) {
+            degree_in_tv.setText("----");
+        } else {
+            degree_in_tv.setText(Degree + "°");
+        }
+        if (GAS.equals("0")) {
+            gas_in_tv.setText("安全");
+        } else if (GAS.equals("1")) {
+            gas_in_tv.setText("危险");
+        } else {
+            gas_in_tv.setText("---");
         }
 
     }
@@ -127,12 +178,15 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent contextIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-        notifyBuilder.setContentTitle("室内空气状况:" + "优");
-        notifyBuilder.setContentText("PM2.5浓度: " + "20");
+        SharedPreferences pref = getSharedPreferences("values", MODE_PRIVATE);
+        String PM = pref.getString("PM", "");
+        String Quailty = pref.getString("Quality", "");
+
+        notifyBuilder.setContentTitle("室内空气状况: " + Quailty);
+        notifyBuilder.setContentText("PM2.5浓度: " + PM + "μg/m³");
         notifyBuilder.setSmallIcon(R.drawable.icon);
         notifyBuilder.setOngoing(true);
         notifyBuilder.setContentIntent(contextIntent);
-
         mNotificationManager.notify(1, notifyBuilder.build());
     }
 
@@ -286,7 +340,6 @@ public class MainActivity extends AppCompatActivity {
             ArrayList<String> results = data.getExtras().getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             String str = results + "";
             String res = str.substring(str.indexOf("[") + 1, str.indexOf("]"));
-            voice_tv.setText(res + "\n");
             // data.get... TODO 识别结果包含的信息见本文档的“结果解析”一节
             voice_control_action(res);
         }
@@ -303,12 +356,44 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         SharedPreferences pref = getSharedPreferences("data_to_mainPage", MODE_PRIVATE);
-        String degree = pref.getString("degree", "");
         String AQI = pref.getString("AQI", "");
         String PM = pref.getString("PM2.5", "");
-        degree_tv.setText(degree);
-        aqi_tv.setText(AQI);
-        pm_tv.setText(PM);
+        aqi_out_tv.setText(AQI);
+        pm_out_tv.setText(PM);
+
+        SharedPreferences valuesPref = getSharedPreferences("values", MODE_PRIVATE);
+        String quality = valuesPref.getString("Quality", "");
+        String CO2_In = valuesPref.getString("CO2", "");
+        String PM_In = valuesPref.getString("PM", "");
+        String Degree = valuesPref.getString("Temperature", "");
+        String GAS = valuesPref.getString("Gas", "");
+        if (quality.equals("")) {
+            quality_tv.setText("----");
+        } else {
+            quality_tv.setText(quality);
+        }
+        if (CO2_In.equals("")) {
+            co_in_tv.setText("----");
+        } else {
+            co_in_tv.setText(AQI);
+        }
+        if (PM_In.equals("")) {
+            pm_in_tv.setText("----");
+        } else {
+            pm_in_tv.setText(PM);
+        }
+        if (Degree.equals("")) {
+            degree_in_tv.setText("----");
+        } else {
+            degree_in_tv.setText(Degree + "°");
+        }
+        if (GAS.equals("0")) {
+            gas_in_tv.setText("安全");
+        } else if (GAS.equals("1")) {
+            gas_in_tv.setText("危险");
+        } else {
+            gas_in_tv.setText("---");
+        }
 
     }
 

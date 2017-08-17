@@ -44,8 +44,12 @@ public class SettingActivity extends AppCompatActivity implements SwitchButton.O
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent contextIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-        notifyBuilder.setContentTitle("室内空气状况: " + "优");
-        notifyBuilder.setContentText("PM2.5浓度: " + "20");
+        SharedPreferences pref = getSharedPreferences("values", MODE_PRIVATE);
+        String PM = pref.getString("PM", "");
+        String Quailty = pref.getString("Quality", "");
+
+        notifyBuilder.setContentTitle("室内空气状况: " + Quailty);
+        notifyBuilder.setContentText("PM2.5浓度: " + PM + "μg/m³");
         notifyBuilder.setSmallIcon(R.drawable.icon);
         notifyBuilder.setOngoing(true);
         notifyBuilder.setContentIntent(contextIntent);
@@ -91,10 +95,8 @@ public class SettingActivity extends AppCompatActivity implements SwitchButton.O
     }
 
     private void initToolbar() {
-
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setTitle("");
-
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setHomeButtonEnabled(true);

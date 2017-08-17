@@ -63,7 +63,7 @@ public class RoomActivity extends AppCompatActivity implements CompoundButton.On
 
     private String PM, Temperature, Humidity, CO2, CH2O, Gas;
 
-    private float PM_degree, Temp_degree, Hum_degree, CO2_degree, CH2O_degree, Gas_degree;
+    private float PM_degree, Temp_degree, Hum_degree, CO2_degree, CH2O_degree;
 
     private int red = Color.rgb(255, 0, 0);
     private int green = Color.rgb(0, 128, 0);
@@ -165,11 +165,11 @@ public class RoomActivity extends AppCompatActivity implements CompoundButton.On
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent contextIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-        String PM = sharedPreferences.getString("PM2.5", "");
+        String PM = sharedPreferences.getString("PM", "");
         String Quailty = sharedPreferences.getString("Quality", "");
 
         notifyBuilder.setContentTitle("室内空气状况: " + Quailty);
-        notifyBuilder.setContentText("PM2.5浓度: " + PM);
+        notifyBuilder.setContentText("PM2.5浓度: " + PM + "μg/m³");
         notifyBuilder.setSmallIcon(R.drawable.icon);
         notifyBuilder.setOngoing(true);
         notifyBuilder.setContentIntent(contextIntent);
@@ -265,10 +265,13 @@ public class RoomActivity extends AppCompatActivity implements CompoundButton.On
                     Humidity = object.getString("humidity");
                     CO2 = object.getString("co2");
                     CH2O = object.getString("ch2o");
-                    //Gas = object.getString("landfillGas");
+                    Gas = object.getString("landfillGas");
 
-                    editor.putString("PM2.5", PM);
-                    editor.putString("Quality", "优");
+                    editor.putString("Temperature", Temperature);
+                    editor.putString("CO2", CO2);
+                    editor.putString("PM", PM);
+                    editor.putString("Gas", Gas);
+                    editor.putString("Quality", "");
                     editor.apply();
 
                     Temp_degree = Float.parseFloat(Temperature);
@@ -276,7 +279,7 @@ public class RoomActivity extends AppCompatActivity implements CompoundButton.On
                     PM_degree = Float.parseFloat(PM) / 2;
                     CH2O_degree = Float.parseFloat(CH2O) * 500;
                     CO2_degree = Float.parseFloat(CO2) / 25;
-                    //Gas_degree=Float.parseFloat(Gas)*100;
+
 
                     radarViewData(PM, CH2O, CO2, Temperature, Humidity);
 
@@ -286,7 +289,18 @@ public class RoomActivity extends AppCompatActivity implements CompoundButton.On
                     mCardAdapter.addCardItem(new CardItem("PM2.5", PM + "μg/m³", (int) PM_degree));
                     mCardAdapter.addCardItem(new CardItem("CH2O", CH2O + "mg/m³", (int) CH2O_degree));
                     mCardAdapter.addCardItem(new CardItem("CO2", CO2 + "ppm", (int) CO2_degree));
-                    //mCardAdapter.addCardItem(new CardItem("Gas", Gas, 50));
+
+                    int Gas_degree;
+                    String security;
+                    if (Gas.equals("0")) {
+                        Gas_degree = 0;
+                        security = "安全";
+                    } else {
+                        Gas_degree = 100;
+                        security = "危险";
+                    }
+
+                    mCardAdapter.addCardItem(new CardItem("Gas", security, Gas_degree));
 
                     mCardShadowTransformer = new ShadowTransformer(mViewPager, mCardAdapter);
 
@@ -294,13 +308,17 @@ public class RoomActivity extends AppCompatActivity implements CompoundButton.On
                     mViewPager.setPageTransformer(false, mCardShadowTransformer);
                     mViewPager.setOffscreenPageLimit(3);
 
-                    if (CO2_degree > 60 || Temp_degree > 40 || Hum_degree > 60 || PM_degree > 60) {
+                    if (CO2_degree > 60 || Temp_degree > 40 || Hum_degree > 60 || PM_degree > 60 || Gas_degree == 100) {
                         Toasty.error(RoomActivity.this, "警告！浓度已超标").show();
                         textView.setText("危险");
                         textView.setTextColor(red);
+                        editor.putString("Quality", "差");
+                        editor.apply();
                     } else {
-                        textView.setText("正常");
+                        textView.setText("安全");
                         textView.setTextColor(green);
+                        editor.putString("Quality", "优");
+                        editor.apply();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
