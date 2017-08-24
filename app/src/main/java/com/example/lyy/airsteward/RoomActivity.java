@@ -2,12 +2,14 @@ package com.example.lyy.airsteward;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
@@ -76,6 +78,8 @@ public class RoomActivity extends AppCompatActivity implements CompoundButton.On
 
     private boolean isNotificationOpen;
 
+    private Vibrator mVibrator;  //声明一个振动器对象
+
     RadarData data = new RadarData(values);
 
     @Override
@@ -104,13 +108,6 @@ public class RoomActivity extends AppCompatActivity implements CompoundButton.On
             editor.putBoolean("isNotificationOpen", false);
             editor.apply();
         }
-//        if (isNetworkAvailable()) {
-//            //Toast.makeText(this, "联网成功", Toast.LENGTH_SHORT).show();
-//        } else {
-//            textView.setText("----");
-//            //Toast.makeText(this, "联网失败", Toast.LENGTH_SHORT).show();
-//        }
-
     }
 
     @Override
@@ -135,6 +132,8 @@ public class RoomActivity extends AppCompatActivity implements CompoundButton.On
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolBarTextView = (TextView) findViewById(R.id.text_view_toolbar_title);
+
+        mVibrator = (Vibrator) getApplication().getSystemService(Service.VIBRATOR_SERVICE);
 
         mRadarView.setEmptyHint("没有数据，下拉刷新");
 
@@ -308,12 +307,17 @@ public class RoomActivity extends AppCompatActivity implements CompoundButton.On
                     mViewPager.setPageTransformer(false, mCardShadowTransformer);
                     mViewPager.setOffscreenPageLimit(3);
 
-                    if (CO2_degree > 60 || Temp_degree > 40 || Hum_degree > 60 || PM_degree > 60 || Gas_degree == 100) {
+                    if (Gas_degree == 100) {
                         Toasty.error(RoomActivity.this, "警告！浓度已超标").show();
                         textView.setText("危险");
                         textView.setTextColor(red);
                         editor.putString("Quality", "差");
                         editor.apply();
+                        /**
+                         * 四个参数就是——停止 开启 停止 开启
+                         * -1不重复，非-1为从pattern的指定下标开始重复
+                         */
+                        mVibrator.vibrate(new long[]{1000, 1000, 1000, 1000}, -1);
                     } else {
                         textView.setText("安全");
                         textView.setTextColor(green);
@@ -325,6 +329,12 @@ public class RoomActivity extends AppCompatActivity implements CompoundButton.On
                 }
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mVibrator.cancel();
     }
 
     private void initToolbar() {

@@ -18,6 +18,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,8 +36,15 @@ import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import es.dmoral.toasty.Toasty;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
 
     private TextView quality_tv;
     private TextView pm_out_tv;
@@ -44,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView co_in_tv;
     private TextView pm_in_tv;
     private TextView degree_in_tv;
-    private TextView gas_in_tv;
 
     private Toolbar mToolbar;
     private TextView mToolBarTextView;
@@ -79,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
         co_in_tv = (TextView) findViewById(R.id.co2_in_tv);
         pm_in_tv = (TextView) findViewById(R.id.pm_in_tv);
         degree_in_tv = (TextView) findViewById(R.id.degree_in_tv);
-        gas_in_tv = (TextView) findViewById(R.id.gas_in_tv);
 
         smallLabel = (LinearLayout) findViewById(R.id.smallLabel);
 
@@ -142,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
         String CO2_In = valuesPref.getString("CO2", "");
         String PM_In = valuesPref.getString("PM", "");
         String Degree = valuesPref.getString("Temperature", "");
-        String GAS = valuesPref.getString("Gas", "");
         if (quality.equals("")) {
             quality_tv.setText("----");
         } else {
@@ -162,13 +167,6 @@ public class MainActivity extends AppCompatActivity {
             degree_in_tv.setText("----");
         } else {
             degree_in_tv.setText(Degree + "°");
-        }
-        if (GAS.equals("0")) {
-            gas_in_tv.setText("安全");
-        } else if (GAS.equals("1")) {
-            gas_in_tv.setText("危险");
-        } else {
-            gas_in_tv.setText("---");
         }
 
     }
@@ -285,12 +283,66 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(recognizerIntent, REQUEST_UI);
     }
 
+    private void identify(String action) {
+        if (action.contains("开")) {
+            if (action.contains("门")) {
+                voice_control_action("开门");
+            } else if (action.contains("窗")) {
+                voice_control_action("打开窗户");
+            } else if (action.contains("灯")) {
+                voice_control_action("开灯");
+            } else if (action.contains("风扇")) {
+                voice_control_action("打开风扇");
+            }
+        } else if (action.contains("关")) {
+            if (action.contains("门")) {
+                voice_control_action("关门");
+            } else if (action.contains("窗")) {
+                voice_control_action("关闭窗户");
+            } else if (action.contains("灯")) {
+                voice_control_action("关灯");
+            } else if (action.contains("风扇")) {
+                voice_control_action("关闭风扇");
+            }
+        } else {
+            voice_control_action(action);
+        }
+    }
+
     //用语音控制行为的方法
     private void voice_control_action(final String action) {
         switch (action) {
             case "打开窗户":
-                //openWindow()
-                Toast.makeText(MainActivity.this, "你说了打开窗户命令", Toast.LENGTH_SHORT).show();
+                sendRequestToControl("window1", "1");
+                Toast.makeText(MainActivity.this, "窗户已打开", Toast.LENGTH_SHORT).show();
+                break;
+            case "关闭窗户":
+                sendRequestToControl("window1", "0");
+                Toast.makeText(MainActivity.this, "窗户已关闭", Toast.LENGTH_SHORT).show();
+                break;
+            case "开门":
+                sendRequestToControl("door", "1");
+                Toast.makeText(MainActivity.this, "门已打开", Toast.LENGTH_SHORT).show();
+                break;
+            case "关门":
+                sendRequestToControl("door", "0");
+                Toast.makeText(MainActivity.this, "门已关闭", Toast.LENGTH_SHORT).show();
+                break;
+            case "打开风扇":
+                sendRequestToControl("fan1", "1");
+                Toast.makeText(MainActivity.this, "风扇已打开", Toast.LENGTH_SHORT).show();
+                break;
+            case "关闭风扇":
+                sendRequestToControl("fan1", "0");
+                Toast.makeText(MainActivity.this, "风扇已关闭", Toast.LENGTH_SHORT).show();
+                break;
+            case "开灯":
+                sendRequestToControl("lant1", "1");
+                Toast.makeText(MainActivity.this, "灯已打开", Toast.LENGTH_SHORT).show();
+                break;
+            case "关灯":
+                sendRequestToControl("lant1", "0");
+                Toast.makeText(MainActivity.this, "灯已关闭", Toast.LENGTH_SHORT).show();
                 break;
             case "查看天气":
                 Intent intent1 = new Intent(MainActivity.this, WeatherIndexActivity.class);
@@ -333,6 +385,33 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void sendRequestToControl(final String type, final String order) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    OkHttpClient client = new OkHttpClient();
+                    RequestBody requestBody = new FormBody.Builder()
+                            .add("id", "1")
+                            .add("key", "BChiSsTqV9jHnnE7")
+                            .add("type", type)
+                            .add("order", order)
+                            .build();
+                    Request request = new Request.Builder()
+                            .url("http://123.207.182.24/sam/api/app/sam_order.php")
+                            .post(requestBody)
+                            .build();
+                    Response response = client.newCall(request).execute();
+                    String responseData = response.body().string();
+                    //Toast.makeText(getApplicationContext(), responseData, Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "type: " + responseData);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -341,7 +420,9 @@ public class MainActivity extends AppCompatActivity {
             String str = results + "";
             String res = str.substring(str.indexOf("[") + 1, str.indexOf("]"));
             // data.get... TODO 识别结果包含的信息见本文档的“结果解析”一节
-            voice_control_action(res);
+
+            identify(res);
+
         }
     }
 
@@ -366,7 +447,6 @@ public class MainActivity extends AppCompatActivity {
         String CO2_In = valuesPref.getString("CO2", "");
         String PM_In = valuesPref.getString("PM", "");
         String Degree = valuesPref.getString("Temperature", "");
-        String GAS = valuesPref.getString("Gas", "");
         if (quality.equals("")) {
             quality_tv.setText("----");
         } else {
@@ -375,24 +455,17 @@ public class MainActivity extends AppCompatActivity {
         if (CO2_In.equals("")) {
             co_in_tv.setText("----");
         } else {
-            co_in_tv.setText(AQI);
+            co_in_tv.setText(CO2_In);
         }
         if (PM_In.equals("")) {
             pm_in_tv.setText("----");
         } else {
-            pm_in_tv.setText(PM);
+            pm_in_tv.setText(PM_In);
         }
         if (Degree.equals("")) {
             degree_in_tv.setText("----");
         } else {
             degree_in_tv.setText(Degree + "°");
-        }
-        if (GAS.equals("0")) {
-            gas_in_tv.setText("安全");
-        } else if (GAS.equals("1")) {
-            gas_in_tv.setText("危险");
-        } else {
-            gas_in_tv.setText("---");
         }
 
     }
